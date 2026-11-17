@@ -2,6 +2,18 @@
 
 Công cụ đọc hóa đơn PDF có lớp văn bản, trích xuất thông tin cần tra cứu, mở cổng chính thức của Cục Thuế và chờ bạn tự nhập CAPTCHA. Công cụ không đọc, giải hoặc vượt CAPTCHA.
 
+## Phiên bản web trên GitHub Pages
+
+Thư mục `web/` chứa phiên bản web tĩnh chạy trực tiếp trong trình duyệt. Trang không có backend, không tải hóa đơn lên máy chủ và không lưu lịch sử. PDF được đọc tạm trong bộ nhớ trình duyệt; thư viện PDF.js và Tesseract.js cùng dữ liệu OCR được tải từ CDN, nhưng nội dung hóa đơn không được gửi đến các dịch vụ đó.
+
+GitHub Actions workflow tại `.github/workflows/deploy-pages.yml` triển khai riêng nội dung `web/` mà không đưa ứng dụng desktop vào website. Để bật Pages lần đầu, vào **Settings → Pages**, chọn **GitHub Actions** làm nguồn triển khai. Sau khi GitHub triển khai thành công, site có địa chỉ `https://bin1408.github.io/paperwork-tool/`.
+
+Trang web trích xuất thông tin PDF (OCR trang đầu cho bản scan), nhưng không thể tự điền hoặc đọc kết quả từ trang Cục Thuế ở tab khác do giới hạn bảo mật của trình duyệt. Người dùng tự nhập CAPTCHA, tra cứu trên website chính thức và dùng chức năng **In → Lưu thành PDF** của trình duyệt để tải kết quả. Bố cục PDF được quyết định bởi trang Cục Thuế và có thể khác giao diện màn hình.
+
+Site GitHub Pages công khai cần truy cập được cho mọi người, kể cả khi mã nguồn của repository vẫn private. Khả năng xuất bản Pages từ private repository phụ thuộc gói GitHub.
+
+Kiểm thử parser web: `node --test web/tests/parser.test.mjs`.
+
 ## Cài đặt
 
 - macOS/Linux: `bash cai_dat.sh`
