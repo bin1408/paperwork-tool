@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#124b42">
+    <meta
+      name="description"
+      content="Trích xuất thông tin hóa đơn ngay trong trình duyệt để hỗ trợ tra cứu trên cổng chính thức của Cục Thuế."
+    >
+    <title>Tra cứu hóa đơn VAT</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Tra cứu hóa đơn VAT - Trang chủ">
+        <span class="brand-mark" aria-hidden="true">VAT</span>
+        <span>Tra cứu hóa đơn <strong>VAT</strong></span>
+      </a>
+      <span class="privacy-note"><span aria-hidden="true">●</span> Xử lý trên trình duyệt</span>
+    </header>
+
+    <main>
+      <section class="intro">
+        <p class="eyebrow">CÔNG CỤ MIỄN PHÍ · KHÔNG LƯU HÓA ĐƠN</p>
+        <h1>Tra cứu hóa đơn<br><span>đơn giản và riêng tư.</span></h1>
+        <p class="intro-copy">
+          Chọn hóa đơn PDF để trích xuất thông tin ngay trên thiết bị của bạn,
+          sau đó tự tra cứu trên cổng chính thức của Cục Thuế.
+        </p>
+      </section>
+
+      <section class="card" aria-labelledby="upload-title">
+        <div class="section-heading">
+          <span class="step">01</span>
+          <div>
+            <h2 id="upload-title">Chọn hóa đơn PDF</h2>
+            <p>Hóa đơn không được tải lên máy chủ.</p>
+          </div>
+        </div>
+        <label class="file-picker" for="invoice-file">
+          <span class="upload-icon" aria-hidden="true">↑</span>
+          <span><strong>Chọn tệp PDF</strong><small>PDF có văn bản hoặc hóa đơn scan</small></span>
+          <input id="invoice-file" type="file" accept="application/pdf,.pdf">
+        </label>
+        <p id="file-name" class="file-name" aria-live="polite"></p>
+        <p class="privacy-detail">
+          Tệp chỉ được đọc tạm trong bộ nhớ của trình duyệt. Không có tài khoản,
+          cơ sở dữ liệu hay lịch sử tra cứu.
+        </p>
+        <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+      </section>
+
+      <section id="details" class="card" aria-labelledby="details-title" hidden>
+        <div class="section-heading">
+          <span class="step">02</span>
+          <div>
+            <h2 id="details-title">Kiểm tra thông tin trích xuất</h2>
+            <p>Hãy đối chiếu với hóa đơn và sửa lại nếu cần.</p>
+          </div>
+        </div>
+        <div class="fields">
+          <label class="field">
+            <span>Mã số thuế người bán</span>
+            <span class="field-control">
+              <input id="tax-code" autocomplete="off" inputmode="numeric">
+              <button type="button" class="copy-button" data-copy="tax-code">Sao chép</button>
+            </span>
+          </label>
+          <label class="field">
+            <span>Ký hiệu hóa đơn <small>(đã bỏ ký tự đầu)</small></span>
+            <span class="field-control">
+              <input id="serial" autocomplete="off">
+              <button type="button" class="copy-button" data-copy="serial">Sao chép</button>
+            </span>
+          </label>
+          <label class="field">
+            <span>Số hóa đơn</span>
+            <span class="field-control">
+              <input id="invoice-number" autocomplete="off">
+              <button type="button" class="copy-button" data-copy="invoice-number">Sao chép</button>
+            </span>
+          </label>
+          <label class="field">
+            <span>Tổng tiền thanh toán</span>
+            <span class="field-control">
+              <input id="total" autocomplete="off" inputmode="numeric">
+              <button type="button" class="copy-button" data-copy="total">Sao chép</button>
+            </span>
+          </label>
+        </div>
+        <div class="notice">
+          <strong>CAPTCHA cần do bạn tự nhập.</strong>
+          <span>Trang này không tự điền biểu mẫu, giải CAPTCHA hay đọc kết quả tra cứu.</span>
+        </div>
+        <a
+          class="primary-button"
+          href="https://hoadondientu.gdt.gov.vn/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >Mở cổng tra cứu của Cục Thuế <span aria-hidden="true">↗</span></a>
+      </section>
+
+      <section class="card steps-card" aria-labelledby="steps-title">
+        <div class="section-heading">
+          <span class="step">03</span>
+          <div>
+            <h2 id="steps-title">Tra cứu và tải kết quả</h2>
+            <p>Thực hiện trực tiếp trên website chính thức.</p>
+          </div>
+        </div>
+        <ol class="steps-list">
+          <li>Mở cổng Cục Thuế, nhập bốn thông tin ở trên vào các ô tương ứng.</li>
+          <li>Tự nhập CAPTCHA và bấm <strong>Tìm kiếm</strong>.</li>
+          <li>Nếu có kết quả, dùng chức năng In của trình duyệt rồi chọn <strong>Lưu thành PDF</strong> để tải về máy.</li>
+        </ol>
+        <p class="official-link">
+          Chỉ nhập thông tin tại website chính thức:
+          <a href="https://hoadondientu.gdt.gov.vn/" target="_blank" rel="noopener noreferrer">hoadondientu.gdt.gov.vn</a>
+        </p>
+      </section>
+
+      <aside class="limits">
+        <strong>Giới hạn của GitHub Pages</strong>
+        <p>
+          Đây là trang tĩnh chạy trong trình duyệt. Vì quy định bảo mật của trình duyệt,
+          trang này không thể tự thao tác hoặc chụp nội dung của website Cục Thuế ở tab khác.
+          Khi in, website Cục Thuế có thể dùng bố cục in khác với giao diện màn hình.
+        </p>
+      </aside>
+    </main>
+
+    <footer>
+      <span>Không phải website của Cục Thuế.</span>
+      <a href="https://github.com/bin1408/paperwork-tool" target="_blank" rel="noopener noreferrer">Mã nguồn trên GitHub</a>
+    </footer>
+  </body>
+</html>
