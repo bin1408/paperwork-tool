@@ -38,9 +38,6 @@ const INPUT_IDS = {
 const fileInput = document.querySelector("#invoice-file");
 const fileName = document.querySelector("#file-name");
 const status = document.querySelector("#status");
-const toolNav = document.querySelector(".tool-nav");
-const toolMenuToggle = document.querySelector("#tool-menu-toggle");
-const toolMenuPanel = document.querySelector("#tool-menu-panel");
 const previewMessage = document.querySelector("#preview-message");
 const previewStage = document.querySelector("#preview-stage");
 const preview = document.querySelector("#document-preview");
@@ -62,36 +59,11 @@ let updateTimer;
 
 fileInput.addEventListener("change", handleFile);
 downloadButton.addEventListener("click", downloadDocument);
-toolMenuToggle.addEventListener("click", () => {
-  setToolMenuOpen(toolMenuPanel.hidden);
-});
-document.addEventListener("pointerdown", (event) => {
-  if (!toolNav.contains(event.target)) setToolMenuOpen(false);
-});
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && !toolMenuPanel.hidden) {
-    setToolMenuOpen(false);
-    toolMenuToggle.focus();
-  }
-});
-toolMenuPanel.addEventListener("click", (event) => {
-  if (event.target.closest("a")) setToolMenuOpen(false);
-});
 new Set(Object.values(inputs)).forEach((input) => {
   input.addEventListener("input", schedulePreview);
 });
 
 initialize();
-
-function setToolMenuOpen(open) {
-  toolMenuPanel.hidden = !open;
-  toolMenuToggle.setAttribute("aria-expanded", String(open));
-  toolNav.classList.toggle("is-open", open);
-  toolMenuToggle.setAttribute(
-    "aria-label",
-    open ? "Đóng danh sách công cụ" : "Mở danh sách công cụ",
-  );
-}
 
 async function initialize() {
   try {
