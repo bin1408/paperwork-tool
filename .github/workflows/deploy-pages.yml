@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "tra-cuu-hoa-don/web/**"
+      - "hdb-ui.css"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -29,6 +30,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+      - name: Include shared HDB UI stylesheet
+        run: cp hdb-ui.css tra-cuu-hoa-don/web/hdb-ui.css
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:

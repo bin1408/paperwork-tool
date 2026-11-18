@@ -1,18 +1,26 @@
-# Công cụ tra cứu hóa đơn điện tử
+# Công cụ hóa đơn và giấy đề nghị thanh toán
 
-Công cụ đọc hóa đơn PDF có lớp văn bản, trích xuất thông tin cần tra cứu, mở cổng chính thức của Cục Thuế và chờ bạn tự nhập CAPTCHA. Công cụ không đọc, giải hoặc vượt CAPTCHA.
+## Công cụ của Thỏ Hằm — GitHub Pages
 
-## Phiên bản web trên GitHub Pages
+Trang GitHub Pages chỉ cung cấp công cụ lập giấy đề nghị thanh toán tại `web/giay-de-nghi-thanh-toan.html`. Trang chính chuyển thẳng đến công cụ này; giao diện tra cứu hóa đơn đã được gỡ khỏi website. Ứng dụng desktop tra cứu hóa đơn ở phần dưới vẫn độc lập.
 
-Thư mục `web/` chứa phiên bản web tĩnh chạy trực tiếp trong trình duyệt. Trang không có backend, không tải hóa đơn lên máy chủ và không lưu lịch sử. PDF được đọc tạm trong bộ nhớ trình duyệt; thư viện PDF.js và Tesseract.js cùng dữ liệu OCR được tải từ CDN, nhưng nội dung hóa đơn không được gửi đến các dịch vụ đó.
+Thư mục `web/` là website tĩnh chạy trong trình duyệt, không có backend, không tải hóa đơn lên máy chủ và không lưu lịch sử. PDF được đọc tạm trong bộ nhớ trình duyệt; PDF.js và Tesseract.js cùng dữ liệu OCR được tải từ CDN, nhưng nội dung hóa đơn không được gửi đến các dịch vụ đó.
 
-GitHub Actions workflow tại `.github/workflows/deploy-pages.yml` triển khai riêng nội dung `web/` mà không đưa ứng dụng desktop vào website. Để bật Pages lần đầu, vào **Settings → Pages**, chọn **GitHub Actions** làm nguồn triển khai. Sau khi GitHub triển khai thành công, site có địa chỉ `https://bin1408.github.io/paperwork-tool/`.
+GitHub Actions workflow tại `.github/workflows/deploy-pages.yml` triển khai riêng nội dung `web/`, không đưa ứng dụng desktop lên website. Để bật Pages lần đầu, vào **Settings → Pages**, chọn **GitHub Actions** làm nguồn triển khai. Sau khi GitHub triển khai thành công, site có địa chỉ `https://bin1408.github.io/paperwork-tool/`.
 
-Trang web trích xuất thông tin PDF (OCR trang đầu cho bản scan), nhưng không thể tự điền hoặc đọc kết quả từ trang Cục Thuế ở tab khác do giới hạn bảo mật của trình duyệt. Người dùng tự nhập CAPTCHA, tra cứu trên website chính thức và dùng chức năng **In → Lưu thành PDF** của trình duyệt để tải kết quả. Bố cục PDF được quyết định bởi trang Cục Thuế và có thể khác giao diện màn hình.
+Website dùng chung giao diện HDB trong `hdb-ui.css` ở thư mục gốc repository; workflow sao chép stylesheet này vào nội dung Pages khi triển khai.
 
 Site GitHub Pages công khai cần truy cập được cho mọi người, kể cả khi mã nguồn của repository vẫn private. Khả năng xuất bản Pages từ private repository phụ thuộc gói GitHub.
 
-Kiểm thử parser web: `node --test web/tests/parser.test.mjs`.
+### Tạo Giấy đề nghị thanh toán
+
+Mở trang chính hoặc `web/giay-de-nghi-thanh-toan.html`. Công cụ dùng mẫu Word do người dùng cung cấp, cho nhập Người đề nghị (được điền vào cả trường họ tên và phần chữ ký trong tài liệu), Chức vụ, đọc ngày/số hóa đơn, nội dung và tổng tiền sau thuế từ PDF, rồi điền cả dòng **Cộng** và số tiền bằng chữ. Có thể sửa mọi trường đã trích xuất trước khi tải `.docx`.
+
+Mẫu PDF gốc `web/templates/payment-request.pdf` được dùng để dựng bản xem trước và làm nền cho file Word; DOCX gốc `web/templates/payment-request.docx` được giữ kèm làm mẫu Word tham chiếu. Thông tin được điền bằng Times New Roman cỡ 12; ngày và số hóa đơn căn giữa cả hai chiều, còn nội dung và số tiền thanh toán căn giữa theo chiều dọc. Hàng nội dung tự giãn theo số dòng. Công cụ nhúng trang đã điền vào DOCX xuất ra dưới dạng ảnh để giữ nguyên bố cục PDF; chữ trong file Word xuất ra không thể sửa riêng từng dòng. Mẫu PDF có một trang nội dung và một trang trắng; các trang sau trang đầu phải không chứa văn bản. PDF.js, Tesseract.js và JSZip được tải từ CDN; nội dung hóa đơn và tài liệu tạo ra không được gửi đến CDN hay máy chủ của dự án. Nếu còn trường thiếu, PDF scan sẽ được OCR trên thiết bị qua toàn bộ các trang. Với PDF có lớp văn bản, OCR cũng đối chiếu nội dung hàng hóa để hiệu chỉnh lỗi ký tự rõ ràng, đồng thời giữ lại dấu tiếng Việt sẵn có; hãy kiểm tra lại thông tin trước khi xuất.
+
+Để thay mẫu sau này, cập nhật cả `web/templates/payment-request.pdf` và `web/templates/payment-request.docx`; PDF dùng để dựng bản xem trước và xuất file Word.
+
+Kiểm thử parser: `node --test web/tests/payment-request-parser.test.mjs`.
 
 ## Cài đặt
 

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#da2128">
+    <meta
+      name="description"
+      content="Tạo Giấy đề nghị thanh toán từ hóa đơn PDF ngay trên trình duyệt."
+    >
+    <title>Tạo Giấy đề nghị thanh toán</title>
+    <link rel="stylesheet" href="./hdb-ui.css?v=1.3.0">
+    <link rel="stylesheet" href="./styles.css?v=20261118.2">
+    <link rel="stylesheet" href="./payment-request.css?v=20261118.2">
+    <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script type="module" src="./payment-request-app.js"></script>
+  </head>
+  <body>
+    <header class="site-header is-sticky">
+      <div class="header-inner">
+        <a class="brand" href="./" aria-label="Công cụ của Thỏ Hằm">
+          <span class="brand-name">Công cụ của Thỏ Hằm</span>
+        </a>
+        <nav class="tool-nav" aria-label="Danh sách công cụ">
+          <button
+            id="tool-menu-toggle"
+            class="tool-menu-toggle"
+            type="button"
+            aria-label="Mở danh sách công cụ"
+            aria-expanded="false"
+            aria-controls="tool-menu-panel"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path>
+            </svg>
+            <span>Công cụ</span>
+          </button>
+          <div id="tool-menu-panel" class="tool-menu-panel" hidden>
+            <p class="tool-menu-heading">Công cụ hiện có</p>
+            <a
+              class="tool-menu-item"
+              href="./giay-de-nghi-thanh-toan.html"
+              aria-current="page"
+            >
+              Tạo Giấy đề nghị thanh toán
+            </a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="intro">
+        <p class="eyebrow">CÔNG CỤ GIẤY TỜ</p>
+        <h1>Tạo Giấy đề nghị<br><span>thanh toán</span></h1>
+        <p class="intro-copy">
+          Chọn hóa đơn PDF, kiểm tra thông tin được trích xuất và xem trước tài liệu
+          trước khi tải file Word về máy.
+        </p>
+      </section>
+
+      <section class="card" aria-labelledby="invoice-title">
+        <div class="section-heading">
+          <span class="step">01</span>
+          <div>
+            <h2 id="invoice-title">Chọn hóa đơn PDF</h2>
+            <p>Hóa đơn được đọc trong trình duyệt, không tải lên máy chủ.</p>
+          </div>
+        </div>
+        <label class="file-picker" for="invoice-file">
+          <span class="upload-icon" aria-hidden="true">↑</span>
+          <span><strong>Chọn tệp PDF</strong><small>PDF có văn bản hoặc hóa đơn scan</small></span>
+          <input id="invoice-file" type="file" accept="application/pdf,.pdf">
+        </label>
+        <p id="file-name" class="file-name" aria-live="polite"></p>
+        <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+      </section>
+
+      <section class="card" aria-labelledby="fields-title">
+        <div class="section-heading">
+          <span class="step">02</span>
+          <div>
+            <h2 id="fields-title">Thông tin đề nghị và hóa đơn</h2>
+            <p>Đối chiếu, bổ sung hoặc sửa thông tin trước khi xuất.</p>
+          </div>
+        </div>
+        <div class="fields">
+          <label class="field">
+            <span>Người đề nghị <small>(bắt buộc)</small></span>
+            <span class="field-control"><input id="requester" autocomplete="name" required></span>
+          </label>
+          <label class="field">
+            <span>Chức vụ <small>(bắt buộc)</small></span>
+            <span class="field-control"><input id="position" autocomplete="organization-title" required></span>
+          </label>
+          <label class="field">
+            <span>Ngày hóa đơn <small>(dd/mm/yyyy)</small></span>
+            <span class="field-control"><input id="invoice-date" inputmode="numeric" placeholder="dd/mm/yyyy" required></span>
+          </label>
+          <label class="field">
+            <span>Số hóa đơn</span>
+            <span class="field-control"><input id="invoice-number" required></span>
+          </label>
+          <label class="field">
+            <span>Số tiền thanh toán <small>(tổng cộng sau thuế)</small></span>
+            <span class="field-control"><input id="total" inputmode="numeric" required></span>
+          </label>
+          <label class="field field-wide">
+            <span>Nội dung thanh toán <small>(nội dung hóa đơn hoặc tên hàng hóa, dịch vụ)</small></span>
+            <span class="field-control"><textarea id="description" rows="3" required></textarea></span>
+          </label>
+          <div class="field field-wide amount-words" aria-live="polite">
+            <span>Số tiền bằng chữ</span>
+            <output id="amount-words">—</output>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="preview-title">
+        <div class="section-heading">
+          <span class="step">03</span>
+          <div>
+            <h2 id="preview-title">Xem trước và tải tài liệu</h2>
+            <p>Bản xem trước sử dụng chính mẫu PDF đã điền.</p>
+          </div>
+        </div>
+        <div id="preview-message" class="preview-message" role="status">
+          Nhập thông tin người đề nghị và chọn hóa đơn để xem trước tài liệu.
+        </div>
+        <div id="preview-stage" class="preview-stage" hidden>
+          <div id="document-preview" aria-label="Bản xem trước giấy đề nghị thanh toán"></div>
+        </div>
+        <div class="action-row">
+          <p class="privacy-detail">
+            File được tạo ngay trên thiết bị. Bản Word giữ nguyên mẫu PDF dưới dạng ảnh để khớp bố cục; chữ trong file Word không thể sửa riêng từng dòng.
+          </p>
+          <button id="download-docx" class="primary-button btn btn-red btn-lg" type="button" disabled>
+            Tải file Word (.docx) <span aria-hidden="true">↓</span>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Thông tin hóa đơn chỉ được xử lý trong trình duyệt.</span>
+      <a href="https://github.com/bin1408/paperwork-tool" target="_blank" rel="noopener noreferrer">Mã nguồn trên GitHub</a>
+    </footer>
+  </body>
+</html>
