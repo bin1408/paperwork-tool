@@ -12,15 +12,12 @@
     <link rel="stylesheet" href="./hdb-ui.css?v=1.3.0">
     <link rel="stylesheet" href="./styles.css?v=20261118.2">
     <link rel="stylesheet" href="./payment-request.css?v=20261118.2">
-    <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
     <script type="module" src="./payment-request-app.js"></script>
   </head>
   <body>
     <header class="site-header is-sticky">
       <div class="header-inner">
-        <a class="brand" href="./" aria-label="Công cụ của Thỏ Hằm">
-          <span class="brand-name">Công cụ của Thỏ Hằm</span>
-        </a>
         <nav class="tool-nav" aria-label="Danh sách công cụ">
           <button
             id="tool-menu-toggle"
@@ -51,11 +48,10 @@
 
     <main>
       <section class="intro">
-        <p class="eyebrow">CÔNG CỤ GIẤY TỜ</p>
         <h1>Tạo Giấy đề nghị<br><span>thanh toán</span></h1>
         <p class="intro-copy">
           Chọn hóa đơn PDF, kiểm tra thông tin được trích xuất và xem trước tài liệu
-          trước khi tải file Word về máy.
+          trước khi tải file PDF về máy.
         </p>
       </section>
 
@@ -132,10 +128,10 @@
         </div>
         <div class="action-row">
           <p class="privacy-detail">
-            File được tạo ngay trên thiết bị. Bản Word giữ nguyên mẫu PDF dưới dạng ảnh để khớp bố cục; chữ trong file Word không thể sửa riêng từng dòng.
+            File PDF được tạo ngay trên thiết bị và giữ nguyên bố cục của mẫu.
           </p>
-          <button id="download-docx" class="primary-button btn btn-red btn-lg" type="button" disabled>
-            Tải file Word (.docx) <span aria-hidden="true">↓</span>
+          <button id="download-pdf" class="primary-button btn btn-red btn-lg" type="button" disabled>
+            Tải file PDF <span aria-hidden="true">↓</span>
           </button>
         </div>
       </section>

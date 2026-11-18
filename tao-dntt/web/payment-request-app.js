@@ -11,8 +11,6 @@ const PDFJS_BASE = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/bui
 const TESSERACT_VERSION = "5.1.1";
 const TESSERACT_BASE = `https://cdn.jsdelivr.net/npm/tesseract.js@${TESSERACT_VERSION}`;
 const TESSERACT_CORE_BASE = `https://cdn.jsdelivr.net/npm/tesseract.js-core@${TESSERACT_VERSION}`;
-const DOCX_MIME =
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 const TEMPLATE_PDF_URL = "./templates/payment-request.pdf";
 const TEMPLATE_RENDER_SCALE = 3;
 const FILLED_TEXT_FONT_SIZE = 12;
@@ -46,7 +44,7 @@ const toolMenuPanel = document.querySelector("#tool-menu-panel");
 const previewMessage = document.querySelector("#preview-message");
 const previewStage = document.querySelector("#preview-stage");
 const preview = document.querySelector("#document-preview");
-const downloadButton = document.querySelector("#download-docx");
+const downloadButton = document.querySelector("#download-pdf");
 const amountWordsOutput = document.querySelector("#amount-words");
 const inputs = Object.fromEntries(
   Object.values(PLACEHOLDERS)
@@ -97,8 +95,8 @@ function setToolMenuOpen(open) {
 
 async function initialize() {
   try {
-    if (!window.JSZip) {
-      throw new Error("Không tải được thư viện tạo file Word. Hãy tải lại trang hoặc kiểm tra kết nối mạng.");
+    if (!window.jspdf?.jsPDF) {
+      throw new Error("Không tải được thư viện tạo file PDF. Hãy tải lại trang hoặc kiểm tra kết nối mạng.");
     }
     const response = await fetch(TEMPLATE_PDF_URL);
     if (!response.ok) {
@@ -493,7 +491,7 @@ async function updatePreview() {
     previewStage.hidden = false;
     const canvas = renderPaymentRequestPage(values);
     if (version !== renderVersion) return;
-    const blob = await buildDocument(canvas);
+    const blob = buildDocument(canvas);
     if (version !== renderVersion) return;
 
     canvas.setAttribute("role", "img");
@@ -715,89 +713,13 @@ function wrapText(context, text, maxWidth) {
   return lines;
 }
 
-async function buildDocument(canvas) {
-  const image = await new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(blob);
-      else reject(new Error("Không tạo được ảnh của mẫu PDF."));
-    }, "image/png");
-  });
-  const zip = new window.JSZip();
-  const pageWidth = Math.round(templatePage.view[2] * 20);
-  const pageHeight = Math.round(templatePage.view[3] * 20);
-  const imageWidth = Math.round(templatePage.view[2] * 12700);
-  const imageHeight = Math.round(templatePage.view[3] * 12700);
-
-  zip.file(
-    "[Content_Types].xml",
-    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
-  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
-  <Default Extension="xml" ContentType="application/xml"/>
-  <Default Extension="png" ContentType="image/png"/>
-  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
-  <Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
-</Types>`,
-  );
-  zip.file(
-    "_rels/.rels",
-    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
-</Relationships>`,
-  );
-  zip.file(
-    "word/_rels/document.xml.rels",
-    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
-  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/payment-request.png"/>
-  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
-</Relationships>`,
-  );
-  zip.file(
-    "word/styles.xml",
-    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:docDefaults>
-    <w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman"/><w:sz w:val="24"/></w:rPr></w:rPrDefault>
-    <w:pPrDefault><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr></w:pPrDefault>
-  </w:docDefaults>
-</w:styles>`,
-  );
-  zip.file(
-    "word/document.xml",
-    `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
-  xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
-  xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-  <w:body>
-    <w:p><w:pPr><w:spacing w:before="0" w:after="0" w:line="1" w:lineRule="exact"/></w:pPr>
-      <w:r><w:drawing><wp:anchor distT="0" distB="0" distL="0" distR="0" simplePos="0" relativeHeight="0" behindDoc="0" locked="1" layoutInCell="1" allowOverlap="0">
-        <wp:simplePos x="0" y="0"/>
-        <wp:positionH relativeFrom="page"><wp:posOffset>0</wp:posOffset></wp:positionH>
-        <wp:positionV relativeFrom="page"><wp:posOffset>0</wp:posOffset></wp:positionV>
-        <wp:extent cx="${imageWidth}" cy="${imageHeight}"/>
-        <wp:effectExtent l="0" t="0" r="0" b="0"/>
-        <wp:wrapNone/>
-        <wp:docPr id="1" name="Giấy đề nghị thanh toán"/>
-        <wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>
-        <a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
-          <pic:pic>
-            <pic:nvPicPr><pic:cNvPr id="0" name="Mẫu giấy đề nghị thanh toán"/><pic:cNvPicPr/></pic:nvPicPr>
-            <pic:blipFill><a:blip r:embed="rId1"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>
-            <pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${imageWidth}" cy="${imageHeight}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>
-          </pic:pic>
-        </a:graphicData></a:graphic>
-      </wp:anchor></w:drawing></w:r>
-    </w:p>
-    <w:sectPr><w:pgSz w:w="${pageWidth}" w:h="${pageHeight}"/><w:pgMar w:top="0" w:right="0" w:bottom="0" w:left="0" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr>
-  </w:body>
-</w:document>`,
-  );
-  zip.file("word/media/payment-request.png", image);
-  return zip.generateAsync({ type: "blob", mimeType: DOCX_MIME });
+function buildDocument(canvas) {
+  const { jsPDF } = window.jspdf;
+  const width = templatePage.view[2];
+  const height = templatePage.view[3];
+  const pdf = new jsPDF({ unit: "pt", format: [width, height], compress: true });
+  pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, width, height);
+  return pdf.output("blob");
 }
 
 function downloadDocument() {
@@ -807,7 +729,7 @@ function downloadDocument() {
     .replace(/[^a-zA-Z0-9_-]+/g, "_");
   const link = document.createElement("a");
   link.href = URL.createObjectURL(latestDocument);
-  link.download = `Giay_de_nghi_thanh_toan_${invoiceNumber || "hoa-don"}.docx`;
+  link.download = `Giay_de_nghi_thanh_toan_${invoiceNumber || "hoa-don"}.pdf`;
   document.body.append(link);
   link.click();
   link.remove();
