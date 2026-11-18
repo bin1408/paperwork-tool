@@ -1,11 +1,11 @@
-name: Deploy invoice lookup to GitHub Pages
+name: Deploy payment request tool to GitHub Pages
 
 on:
   push:
     branches:
       - main
     paths:
-      - "tra-cuu-hoa-don/web/**"
+      - "tao-dntt/web/**"
       - "hdb-ui.css"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
@@ -31,11 +31,11 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
       - name: Include shared HDB UI stylesheet
-        run: cp hdb-ui.css tra-cuu-hoa-don/web/hdb-ui.css
+        run: cp hdb-ui.css tao-dntt/web/hdb-ui.css
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: tra-cuu-hoa-don/web
+          path: tao-dntt/web
       - name: Deploy site
         id: deployment
         uses: actions/deploy-pages@v4
