@@ -111,7 +111,7 @@ function characterSimilarity(first, second) {
 const DATE_LABEL =
   /(?:ngày\s*(?:lập(?:\s*(?:hóa|hoá)\s*đơn)?|(?:hóa|hoá)\s*đơn)|invoice\s*date|date)\s*[:：]?\s*(\d{1,2}\s*[./-]\s*\d{1,2}\s*[./-]\s*\d{4})/i;
 const INVOICE_NUMBER_LABEL =
-  /(?:số\s*(?:\(\s*invoice\s*no\.?\s*\)|(?:hóa|hoá)\s*đơn)|invoice\s*no\.?)\s*[:：]?\s*([A-Z0-9][A-Z0-9./-]*)/i;
+  /(?:số\s*(?:\(\s*(?:invoice\s*)?no\.?\s*\)|(?:hóa|hoá)\s*đơn)|invoice\s*no\.?)\s*[:：]?\s*([A-Z0-9][A-Z0-9./-]*)/i;
 const DESCRIPTION_LABEL =
   /(?:nội\s*dung(?:\s*(?:(?:hóa|hoá)\s*đơn|thanh\s*toán))?|tên\s*hàng\s*(?:hóa|hoá)\s*,?\s*dịch\s*vụ|description|goods\s*(?:and|&)\s*services)\s*[:：]?\s*(.*)/i;
 const TOTAL_LABEL =
@@ -151,9 +151,18 @@ export function extractOcrDescription(text) {
       .replace(/^[|:;,.]+\s*/, "")
       .replace(/\s*[|=]+\s*$/, "")
       .trim();
-    if (cleaned) description.push(cleaned);
+    if (cleaned) appendDescriptionLine(description, cleaned);
   }
   return description.join(" ");
+}
+
+function appendDescriptionLine(description, line) {
+  const previous = description.at(-1);
+  if (previous && /[^\s]-$/.test(previous)) {
+    description[description.length - 1] += line;
+  } else {
+    description.push(line);
+  }
 }
 
 function extractInvoiceDate(text, lines) {
@@ -203,13 +212,18 @@ function extractDescription(lines) {
   if (index < 0) return "";
   const match = lines[index].match(DESCRIPTION_LABEL);
   const inlineDescription = match?.[1]?.trim();
-  if (inlineDescription && !isTableHeader(inlineDescription)) {
-    return inlineDescription;
+  if (
+    inlineDescription &&
+    !isDescriptionTableHeader(inlineDescription) &&
+    !isTableColumnIndex(inlineDescription)
+  ) {
+    return cleanDescriptionLine(inlineDescription);
   }
 
   const description = [];
   for (const line of lines.slice(index + 1)) {
-    if (isTableHeader(line) || isTableColumnIndex(line)) continue;
+    if (isDescriptionTableHeader(line) || isTableColumnIndex(line)) continue;
+    if (/^(?:(?:stt|no\.?)\s*)?\d+\s*[|.)-]?$/i.test(line)) continue;
     if (
       /^(?:cộng tiền hàng|tổng cộng tiền thanh toán|thuế suất|tiền thuế|đơn vị cung cấp giải pháp|số tiền viết bằng chữ|amount\s*\(in words\))/i.test(
         line,
@@ -218,16 +232,30 @@ function extractDescription(lines) {
       break;
     }
 
-    const startsItem = /^\d+\s*[|.)-]?\s+\S/.test(line);
+    if (/^\d{1,3}(?:[.,]\d{3})+(?:\s|$)/.test(line)) continue;
+    const startsItem = /^(?:no\.?\s*)?\d+\s*[|.)-]?\s+\S/i.test(line);
     if (startsItem && description.length > 0) break;
-    const cleaned = (startsItem ? line.replace(/^\d+\s*[|.)-]?\s+/, "") : line)
-      .replace(/\s+\d{1,3}(?:[.,]\d{3})+$/, "")
-      .replace(/^[|:;,.]+\s*/, "")
-      .replace(/\s*[|=]+\s*$/, "")
-      .trim();
-    if (cleaned) description.push(cleaned);
+    const cleaned = cleanDescriptionLine(line);
+    if (cleaned) appendDescriptionLine(description, cleaned);
   }
   return description.join(" ");
+}
+
+function cleanDescriptionLine(line) {
+  return line
+    .replace(/^no\.?\s+(?=[\p{L}])/iu, "")
+    .replace(/^\d+\s*[|.)-]?\s+/, "")
+    .replace(/\s+\d{1,3}(?:[.,]\d{3})+$/, "")
+    .replace(/^[|:;,.]+\s*/, "")
+    .replace(/\s*[|=]+\s*$/, "")
+    .trim();
+}
+
+function isDescriptionTableHeader(line) {
+  const normalized = line.trim().replace(/^[([]|[)\]]$/g, "").trim();
+  return /^(?:(?:stt\s*)?no\.?|(?:stt\s*)?item|tên hàng hóa(?:,)? dịch vụ|tên hàng hoá(?:,)? dịch vụ|name of goods and services|đơn vị tính|đvt|dvt|unit|uom|số lượng|quantity|đơn giá|unit price|price|thành tiền|amount)(?:\s+(?:item|đvt|dvt|unit|uom|số lượng|quantity|đơn giá|unit price|price|thành tiền|amount))*$/i.test(
+    normalized,
+  ) || isTableHeader(normalized);
 }
 
 function isTableHeader(line) {

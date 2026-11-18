@@ -89,6 +89,65 @@ Tổng cộng tiền thanh toán (Total) : 1.497.640.473`),
   );
 });
 
+test("extracts the full item description from the attached invoice layout", () => {
+  assert.equal(
+    extractPaymentRequestInvoice(`Tên hàng hóa, dịch vụ
+Item
+ĐVT
+Unit
+Số lượng
+Quantity
+Đơn giá
+Price
+Thành tiền
+Amount
+1 2 3 4 5 6=4x5
+1
+Chi phí dịch vụ đợt 2 theo Biên bản nghiệm thu của hợp đồng số
+201224/HDKT-HDB-PMAX-HD ký ngày 20/12/2024 và Phụ
+lục 01 số PL01 - 201224/HDKT-HDB-PMAX-HD ký ngày
+01/04/2025
+1.670.113.399
+Cộng tiền hàng (Total Amount): 1.670.113.399`).description,
+    "Chi phí dịch vụ đợt 2 theo Biên bản nghiệm thu của hợp đồng số 201224/HDKT-HDB-PMAX-HD ký ngày 20/12/2024 và Phụ lục 01 số PL01 - 201224/HDKT-HDB-PMAX-HD ký ngày 01/04/2025",
+  );
+});
+
+test("extracts the invoice number and wrapped description from the Game Euro invoice", () => {
+  assert.deepEqual(
+    extractPaymentRequestInvoice(`Ngày (Date) 26 tháng (month) 06 năm (year) 2024
+Số (No.): 00000065
+Tên hàng hóa, dịch vụ
+(Name of goods and services)
+Đơn vị tính
+(Unit)
+Số lượng
+(Quantity)
+Đơn giá
+(Unit price)
+Thành tiền
+(Amount)
+1
+Dịch vụ quảng cáo đợt 1 theo hợp đồng số
+120624/HDKT/HDBANK-
+APPROI/GAMEEURO2024 ký ngày
+12/06/2024 và PL01 -
+120624/HDKT/HDBANK-
+APPROI/GAMEEURO2024 ký ngày
+12/06/2024
+832.956.396
+Cộng tiền hàng (Total before VAT): 832.956.396
+Tổng tiền thanh toán (Total amount): 899.592.908`),
+    {
+      invoiceDate: "26/06/2024",
+      invoiceNumber: "00000065",
+      description:
+        "Dịch vụ quảng cáo đợt 1 theo hợp đồng số 120624/HDKT/HDBANK-APPROI/GAMEEURO2024 ký ngày 12/06/2024 và PL01 - 120624/HDKT/HDBANK-APPROI/GAMEEURO2024 ký ngày 12/06/2024",
+      total: "899592908",
+    },
+  );
+});
+
 test("accepts Vietnamese written dates and rejects invalid calendar dates", () => {
   assert.equal(
     extractPaymentRequestInvoice("Ngày 9 tháng 11 năm 2025").invoiceDate,
