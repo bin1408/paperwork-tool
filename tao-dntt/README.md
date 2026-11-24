@@ -14,11 +14,11 @@ Site GitHub Pages công khai cần truy cập được cho mọi người, kể 
 
 ### Tạo Giấy đề nghị thanh toán
 
-Mở trang chính hoặc `web/giay-de-nghi-thanh-toan.html`. Công cụ dùng mẫu PDF do người dùng cung cấp, cho nhập Người đề nghị (được điền vào cả trường họ tên và phần chữ ký trong tài liệu), Chức vụ, đọc ngày/số hóa đơn, nội dung và tổng tiền sau thuế từ PDF, rồi điền cả dòng **Cộng** và số tiền bằng chữ. Có thể sửa mọi trường đã trích xuất trước khi tải `.pdf`.
+Mở trang chính hoặc `web/giay-de-nghi-thanh-toan.html`. Công cụ dùng trực tiếp mẫu Word `web/templates/payment-request.docx`, cho nhập Người đề nghị (được điền vào trường họ tên và phần ký tên), Chức vụ, đọc ngày/số hóa đơn, các dòng hàng hóa và tổng tiền sau thuế từ PDF, rồi điền dòng **Tổng Cộng** và số tiền bằng chữ. Tài liệu xuất ra là `.docx`; nội dung chèn mới dùng Times New Roman cỡ 12.
 
-Mẫu PDF gốc `web/templates/payment-request.pdf` được dùng để dựng bản xem trước và xuất PDF. DOCX gốc `web/templates/payment-request.docx` được giữ kèm làm mẫu Word tham chiếu. Thông tin được điền bằng Times New Roman cỡ 12; ngày và số hóa đơn căn giữa cả hai chiều, còn nội dung và số tiền thanh toán căn giữa theo chiều dọc. Hàng nội dung tự giãn theo số dòng. Tài liệu PDF giữ nguyên bố cục mẫu; PDF.js, Tesseract.js và jsPDF được tải từ CDN. Nội dung hóa đơn và tài liệu tạo ra không được gửi đến CDN hay máy chủ của dự án. Nếu còn trường thiếu, PDF scan sẽ được OCR trên thiết bị qua toàn bộ các trang. Với PDF có lớp văn bản, OCR cũng đối chiếu nội dung hàng hóa để hiệu chỉnh lỗi ký tự rõ ràng, đồng thời giữ lại dấu tiếng Việt sẵn có; hãy kiểm tra lại thông tin trước khi xuất.
+Mẫu Word duy nhất `web/templates/payment-request.docx` là mẫu chính và được giữ bố cục khi điền. PDF.js và Tesseract.js được tải từ CDN để đọc hóa đơn PDF và OCR khi cần; JSZip được tải để cập nhật DOCX trong trình duyệt. Nội dung hóa đơn và tài liệu tạo ra không được gửi đến CDN hay máy chủ của dự án. Bộ đọc nhận diện nhãn Việt/Anh phổ biến, các dòng hàng hóa, ngày, ký hiệu/số hóa đơn và tổng tiền. Kết quả độ tin cậy thấp được báo để người dùng kiểm tra; hãy đối chiếu thông tin trước khi tải.
 
-Để thay mẫu sau này, cập nhật cả `web/templates/payment-request.pdf` và `web/templates/payment-request.docx`; PDF dùng để dựng bản xem trước và xuất file PDF.
+Để thay mẫu sau này, cập nhật `web/templates/payment-request.docx`. File mẫu PDF cũ đã được gỡ bỏ.
 
 Kiểm thử parser: `node --test web/tests/payment-request-parser.test.mjs`.
 

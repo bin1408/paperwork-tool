@@ -2,6 +2,96 @@
   grid-column: 1 / -1;
 }
 
+.invoice-items-field > span {
+  display: block;
+  margin-bottom: 9px;
+  font-weight: 600;
+}
+
+.invoice-items {
+  display: grid;
+  gap: 10px;
+}
+
+.invoice-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 220px) auto;
+  align-items: end;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.invoice-item label {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.invoice-item input,
+.invoice-item textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+.invoice-item textarea {
+  min-height: 42px;
+  resize: vertical;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.invoice-item input:focus,
+.invoice-item textarea:focus {
+  border-color: var(--green);
+  outline: 3px solid var(--red-10);
+}
+
+.remove-invoice-item,
+.secondary-button {
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--green-dark);
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.remove-invoice-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.secondary-button {
+  margin-top: 10px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .field-control textarea {
   width: 100%;
   min-width: 0;
@@ -98,5 +188,416 @@
   .action-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .invoice-item {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* Hai khu vực theo bố cục trang công cụ HDB Digital Hub. */
+main {
+  width: min(100% - 40px, 1440px);
+}
+
+.workspace {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr);
+  grid-template-areas: "form preview";
+  grid-template-rows: auto;
+  align-items: start;
+  gap: 20px;
+  margin-top: 0;
+}
+
+.workspace-form {
+  grid-area: form;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.workspace > .ws-preview {
+  grid-area: preview;
+  position: sticky;
+  top: 76px;
+  min-width: 0;
+  margin: 0;
+}
+
+.workspace .card {
+  width: 100%;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  main {
+    width: min(100% - 32px, 760px);
+  }
+
+  .workspace {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "form" "preview";
+    gap: 16px;
+  }
+}
+
+@media (max-width: 620px) {
+  main {
+    width: min(100% - 24px, 760px);
+  }
+}
+
+
+/* DOCX preview pages scale to the available column and stay visible on scroll. */
+.workspace > .ws-preview {
+  position: sticky;
+  top: 76px;
+}
+
+#document-preview .docx-wrapper {
+  width: 100%;
+  gap: 12px !important;
+  overflow: hidden;
+  padding: 10px !important;
+  background: var(--grey-10) !important;
+}
+
+#document-preview .docx-wrapper > section.docx {
+  flex: 0 0 auto;
+  margin-inline: 0;
+}
+
+@media (max-width: 900px) {
+  .workspace > .ws-preview {
+    top: 68px;
+  }
+}
+
+
+/* Keep the full desktop workflow inside the browser viewport. */
+@media (min-width: 901px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  main {
+    display: flex;
+    height: calc(100dvh - 73px);
+    min-height: 0;
+    flex-direction: column;
+    padding-block: 10px 14px;
+    overflow: hidden;
+  }
+
+  .intro {
+    flex: 0 0 auto;
+    max-width: none;
+    margin: 0 0 10px;
+    text-align: left;
+  }
+
+  .intro h1 {
+    font-size: 25px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .intro h1 br {
+    display: none;
+  }
+
+  .intro h1 span::before {
+    content: " ";
+  }
+
+  .intro-copy {
+    max-width: none;
+    margin: 4px 0 0;
+    font-size: 13px;
+  }
+
+  .workspace {
+    flex: 1 1 auto;
+    min-height: 0;
+    align-items: stretch;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .workspace-form {
+    height: 100%;
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr);
+    align-content: start;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .workspace-form > .card,
+  .workspace > .ws-preview {
+    min-height: 0;
+  }
+
+  .workspace-form > .card {
+    padding: 14px;
+  }
+
+  .workspace-form .section-heading {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .workspace-form .section-heading > .step {
+    width: 32px;
+    height: 32px;
+  }
+
+  .workspace-form .section-heading h2 {
+    font-size: 16px;
+  }
+
+  .workspace-form .file-picker {
+    gap: 12px;
+    padding: 8px 12px;
+  }
+
+  .workspace-form .upload-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .workspace-form .file-name,
+  .workspace-form .status {
+    margin-top: 6px;
+  }
+
+  .workspace-form .status {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .workspace-form .fields {
+    gap: 9px 12px;
+  }
+
+  .workspace-form .field > span:first-child {
+    margin-bottom: 3px;
+    font-size: 11px;
+  }
+
+  .workspace-form .field-control input {
+    height: 34px;
+    padding-inline: 9px;
+    font-size: 12px;
+  }
+
+  .workspace-form .invoice-items-field > span {
+    margin-bottom: 5px;
+  }
+
+  .workspace-form .invoice-item {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .workspace-form .invoice-item textarea {
+    min-height: 34px;
+    padding: 6px 8px;
+  }
+
+  .workspace-form .invoice-item input {
+    height: 34px;
+    padding: 0 8px;
+  }
+
+  .workspace-form .secondary-button {
+    margin-top: 6px;
+    padding-block: 6px;
+  }
+
+  .workspace-form .amount-words output {
+    min-height: 34px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .workspace > .ws-preview {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    padding: 18px;
+  }
+
+  .workspace > .ws-preview .section-heading {
+    flex: 0 0 auto;
+    margin-bottom: 12px;
+  }
+
+  .workspace > .ws-preview .preview-message {
+    flex: 0 0 auto;
+    margin-bottom: 10px;
+    padding: 8px 11px;
+  }
+
+  .preview-stage {
+    display: flex;
+    max-height: none;
+    min-height: 0;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 8px;
+  }
+
+  #document-preview {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  #document-preview .docx-wrapper {
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 8px !important;
+  }
+
+  .workspace > .ws-preview .action-row {
+    flex: 0 0 auto;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .workspace > .ws-preview .privacy-detail {
+    font-size: 11px;
+  }
+
+  footer {
+    display: none;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 901px) {
+  .intro h1 {
+    font-size: 21px;
+  }
+
+  .intro-copy {
+    display: none;
+  }
+
+  .workspace-form > .card {
+    padding: 16px;
+  }
+
+  .workspace-form .section-heading {
+    margin-bottom: 12px;
+  }
+
+  .workspace > .ws-preview {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  html,
+  body {
+    height: auto;
+    overflow: auto;
+  }
+
+  main {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding-block: 32px 40px;
+  }
+
+  .workspace-form {
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .workspace > .ws-preview {
+    height: auto;
+  }
+
+  .preview-stage {
+    max-height: 75vh;
+    min-height: 320px;
+    overflow: auto;
+  }
+
+  #document-preview,
+  #document-preview .docx-wrapper {
+    height: auto;
+  }
+}
+
+@media (max-height: 800px) and (min-width: 901px) {
+  .intro {
+    margin-bottom: 6px;
+  }
+
+  .intro-copy,
+  .workspace-form .section-heading p {
+    display: none;
+  }
+
+  .workspace-form {
+    gap: 8px;
+  }
+
+  .workspace-form > .card {
+    padding: 10px;
+  }
+
+  .workspace-form .section-heading {
+    margin-bottom: 6px;
+  }
+
+  .workspace-form .fields {
+    gap: 5px 8px;
+  }
+
+  .workspace-form .field > span:first-child {
+    margin-bottom: 2px;
+  }
+
+  .workspace-form .field-control input {
+    height: 30px;
+  }
+
+  .workspace-form .invoice-item {
+    gap: 6px;
+    padding: 6px;
+  }
+
+  .workspace-form .invoice-item textarea {
+    min-height: 30px;
+    padding: 4px 6px;
+  }
+
+  .workspace-form .invoice-item input {
+    height: 30px;
+  }
+
+  .workspace-form .secondary-button {
+    margin-top: 4px;
+    padding-block: 4px;
+  }
+
+  .workspace-form .amount-words output {
+    min-height: 30px;
+    padding-block: 4px;
   }
 }

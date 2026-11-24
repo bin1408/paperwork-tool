@@ -11,10 +11,11 @@
     <title>Tạo Giấy đề nghị thanh toán</title>
     <link rel="stylesheet" href="./hdb-ui.css?v=1.3.0">
     <link rel="stylesheet" href="./styles.css?v=20261118.3">
-    <link rel="stylesheet" href="./payment-request.css?v=20261118.2">
-    <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="./payment-request.css?v=20261123.10">
+    <script defer src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.6/dist/docx-preview.min.js"></script>
     <script defer src="./tool-menu.js?v=20261118.3"></script>
-    <script type="module" src="./payment-request-app.js"></script>
+    <script type="module" src="./payment-request-app.js?v=20261123.41"></script>
   </head>
   <body>
     <header class="site-header is-sticky">
@@ -54,91 +55,101 @@
       <section class="intro">
         <h1>Tạo Giấy đề nghị<br><span>thanh toán</span></h1>
         <p class="intro-copy">
-          Chọn hóa đơn PDF, kiểm tra thông tin được trích xuất và xem trước tài liệu
-          trước khi tải file PDF về máy.
+          Chọn hóa đơn PDF, kiểm tra thông tin được trích xuất và tải giấy đề nghị
+          thanh toán dưới dạng file Word.
         </p>
       </section>
 
-      <section class="card" aria-labelledby="invoice-title">
-        <div class="section-heading">
-          <span class="step">01</span>
-          <div>
-            <h2 id="invoice-title">Chọn hóa đơn PDF</h2>
-            <p>Hóa đơn được đọc trong trình duyệt, không tải lên máy chủ.</p>
-          </div>
-        </div>
-        <label class="file-picker" for="invoice-file">
-          <span class="upload-icon" aria-hidden="true">↑</span>
-          <span><strong>Chọn tệp PDF</strong><small>PDF có văn bản hoặc hóa đơn scan</small></span>
-          <input id="invoice-file" type="file" accept="application/pdf,.pdf">
-        </label>
-        <p id="file-name" class="file-name" aria-live="polite"></p>
-        <div id="status" class="status" role="status" aria-live="polite" hidden></div>
-      </section>
+      <div class="workspace">
+        <div class="workspace-form ws-form">
+          <section class="card" aria-labelledby="invoice-title">
+            <div class="section-heading">
+              <span class="step">01</span>
+              <div>
+                <h2 id="invoice-title">Chọn hóa đơn PDF</h2>
+                <p>Hóa đơn được đọc trong trình duyệt, không tải lên máy chủ.</p>
+              </div>
+            </div>
+            <label class="file-picker" for="invoice-file">
+              <span class="upload-icon" aria-hidden="true">↑</span>
+              <span><strong>Chọn tệp PDF</strong><small>PDF có văn bản hoặc hóa đơn scan</small></span>
+              <input id="invoice-file" type="file" accept="application/pdf,.pdf">
+            </label>
+            <p id="file-name" class="file-name" aria-live="polite"></p>
+            <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+          </section>
 
-      <section class="card" aria-labelledby="fields-title">
-        <div class="section-heading">
-          <span class="step">02</span>
-          <div>
-            <h2 id="fields-title">Thông tin đề nghị và hóa đơn</h2>
-            <p>Đối chiếu, bổ sung hoặc sửa thông tin trước khi xuất.</p>
-          </div>
-        </div>
-        <div class="fields">
-          <label class="field">
-            <span>Người đề nghị <small>(bắt buộc)</small></span>
-            <span class="field-control"><input id="requester" autocomplete="name" required></span>
-          </label>
-          <label class="field">
-            <span>Chức vụ <small>(bắt buộc)</small></span>
-            <span class="field-control"><input id="position" autocomplete="organization-title" required></span>
-          </label>
-          <label class="field">
-            <span>Ngày hóa đơn <small>(dd/mm/yyyy)</small></span>
-            <span class="field-control"><input id="invoice-date" inputmode="numeric" placeholder="dd/mm/yyyy" required></span>
-          </label>
-          <label class="field">
-            <span>Số hóa đơn</span>
-            <span class="field-control"><input id="invoice-number" required></span>
-          </label>
-          <label class="field">
-            <span>Số tiền thanh toán <small>(tổng cộng sau thuế)</small></span>
-            <span class="field-control"><input id="total" inputmode="numeric" required></span>
-          </label>
-          <label class="field field-wide">
-            <span>Nội dung thanh toán <small>(nội dung hóa đơn hoặc tên hàng hóa, dịch vụ)</small></span>
-            <span class="field-control"><textarea id="description" rows="3" required></textarea></span>
-          </label>
-          <div class="field field-wide amount-words" aria-live="polite">
-            <span>Số tiền bằng chữ</span>
-            <output id="amount-words">—</output>
-          </div>
-        </div>
-      </section>
+          <section class="card" aria-labelledby="fields-title">
+            <div class="section-heading">
+              <span class="step">02</span>
+              <div>
+                <h2 id="fields-title">Thông tin đề nghị và hóa đơn</h2>
+                <p>Đối chiếu, bổ sung hoặc sửa thông tin trước khi xuất.</p>
+              </div>
+            </div>
+            <div class="fields">
+              <label class="field">
+                <span>Người đề nghị <small>(bắt buộc)</small></span>
+                <span class="field-control"><input id="requester" autocomplete="name" required></span>
+              </label>
+              <label class="field">
+                <span>Chức vụ <small>(bắt buộc)</small></span>
+                <span class="field-control"><input id="position" autocomplete="organization-title" required></span>
+              </label>
+              <label class="field">
+                <span>Ngày hóa đơn <small>(dd/mm/yyyy)</small></span>
+                <span class="field-control"><input id="invoice-date" inputmode="numeric" placeholder="dd/mm/yyyy" required></span>
+              </label>
+              <label class="field">
+                <span>Ký hiệu hóa đơn</span>
+                <span class="field-control"><input id="invoice-serial"></span>
+              </label>
+              <label class="field">
+                <span>Số hóa đơn</span>
+                <span class="field-control"><input id="invoice-number" required></span>
+              </label>
+              <label class="field">
+                <span>Số tiền thanh toán <small>(tổng cộng sau thuế)</small></span>
+                <span class="field-control"><input id="total" inputmode="numeric" required></span>
+              </label>
+              <div class="field field-wide invoice-items-field">
+                <span>Tên hàng hóa, dịch vụ và thành tiền</span>
+                <div id="invoice-items" class="invoice-items" aria-live="polite"></div>
+                <button id="add-invoice-item" class="secondary-button" type="button">Thêm dòng hàng hóa</button>
+                <textarea id="description" class="visually-hidden" tabindex="-1" aria-hidden="true" required></textarea>
+              </div>
+              <div class="field field-wide amount-words" aria-live="polite">
+                <span>Số tiền bằng chữ</span>
+                <output id="amount-words">—</output>
+              </div>
+            </div>
+          </section>
 
-      <section class="card" aria-labelledby="preview-title">
-        <div class="section-heading">
-          <span class="step">03</span>
-          <div>
-            <h2 id="preview-title">Xem trước và tải tài liệu</h2>
-            <p>Bản xem trước sử dụng chính mẫu PDF đã điền.</p>
+        </div>
+        <section class="card ws-preview" aria-labelledby="preview-title">
+          <div class="section-heading">
+            <span class="step">03</span>
+            <div>
+              <h2 id="preview-title">Xem trước đề nghị thanh toán</h2>
+              <p>Kiểm tra mẫu trước khi tải file Word.</p>
+            </div>
           </div>
-        </div>
-        <div id="preview-message" class="preview-message" role="status">
-          Nhập thông tin người đề nghị và chọn hóa đơn để xem trước tài liệu.
-        </div>
-        <div id="preview-stage" class="preview-stage" hidden>
-          <div id="document-preview" aria-label="Bản xem trước giấy đề nghị thanh toán"></div>
-        </div>
-        <div class="action-row">
-          <p class="privacy-detail">
-            File PDF được tạo ngay trên thiết bị và giữ nguyên bố cục của mẫu.
-          </p>
-          <button id="download-pdf" class="primary-button btn btn-red btn-lg" type="button" disabled>
-            Tải file PDF <span aria-hidden="true">↓</span>
-          </button>
-        </div>
-      </section>
+          <div id="preview-message" class="preview-message" role="status">
+            Mẫu giấy đề nghị sẽ hiển thị tại đây và cập nhật theo thông tin bạn nhập.
+          </div>
+          <div id="preview-stage" class="preview-stage" hidden>
+            <div id="document-preview" aria-label="Bản xem trước giấy đề nghị thanh toán"></div>
+          </div>
+          <div class="action-row">
+            <p class="privacy-detail">
+              File Word được tạo trên thiết bị theo mẫu DOCX mới.
+            </p>
+              <button id="download-docx" class="primary-button btn btn-red btn-lg" type="button" disabled>
+              Tải file Word <span aria-hidden="true">↓</span>
+            </button>
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer>
